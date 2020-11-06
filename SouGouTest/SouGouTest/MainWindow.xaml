@@ -1,0 +1,404 @@
+﻿<Window x:Class="SouGouTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SouGouTest"
+        mc:Ignorable="d" WindowState="Maximized"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.Resources>
+            <!--键盘的大致样式-->
+            <Style x:Key="gridKeyboardStyle" TargetType="Grid">
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="Height" Value="auto"/>
+                <Setter Property="MinHeight" Value="300"/>
+                <Setter Property="MaxHeight" Value="350"/>
+                <Setter Property="Background" Value="#B3000000"/>
+                <Setter Property="Visibility" Value="Collapsed"/>
+                <Setter Property="Grid.RowSpan" Value="2" />
+            </Style>
+
+            <!--默认图标按钮基样式-->
+            <Style TargetType="{x:Type Button}" x:Key="ButtonDefaultIcoStyle" >
+                <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="RenderTransform" >
+                    <Setter.Value>
+                        <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1" x:Name="scal" ScaleY="1"/>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsPressed" Value="true">
+                        <Trigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.9" Duration="0:0:0.1" />
+                                    <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.9" Duration="0:0:0.1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.EnterActions>
+                        <Trigger.ExitActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="0:0:0.2" />
+                                    <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.2" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </Trigger.ExitActions>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.2"/>
+                    </Trigger>
+
+                    <EventTrigger RoutedEvent="Button.TouchDown">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleX" To="0.9" Duration="0:0:0.1" />
+                                <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleY" To="0.9" Duration="0:0:0.1" />
+                                <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleX" To="1" Duration="0:0:0.2" />
+                                <DoubleAnimation  Storyboard.TargetProperty="RenderTransform.ScaleY" To="1" Duration="0:0:0.2" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ButtonJPStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonDefaultIcoStyle}">
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Width" Value="90"/>
+                <Setter Property="Height" Value="90"/>
+                <Setter Property="FontSize" Value="65"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid  x:Name="bd">
+                                <Image Source="pack://application:,,,/Images/键盘按钮.png" Stretch="Fill" x:Name="img"/>
+                                <TextBlock Text="{TemplateBinding Content}" Margin="5"
+                                       x:Name="txb" Foreground="#FF616161" FontSize="{TemplateBinding FontSize}" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Source" Value="pack://application:,,,/Images/键盘按钮-点击.png" TargetName="img"/>
+                                    <Setter Property="Foreground" Value="#FFFFFF" TargetName="txb"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="Search_ButtonJPStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonJPStyle}">
+                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="Width" Value="66"/>
+                <Setter Property="Height" Value="66"/>
+                <Setter Property="Margin" Value="6"/>
+            </Style>
+
+            <!--上一页-->
+            <Path x:Key="PreviousPagePath" Fill="#466BC1" Stretch="Fill"  StrokeThickness="2" 
+    Data="M39.8,78.2c2.7,0,5.3-1.1,7.2-3c4-3.9,4-10.4,0-14.3L24.4,38.6L47,16.3c4-3.9,4-10.4,0-14.3
+	c-1.9-1.9-4.5-3-7.2-3s-5.3,1.1-7.2,3L3,31.2c-2,2-3.1,4.7-3,7.5c-0.1,2.8,1,5.5,3,7.4l29.5,29.2C34.5,77.2,37,78.2,39.8,78.2
+	L39.8,78.2z" />
+
+            <Path x:Key="PreviousPagePathDis" Fill="#A5A5A5" Stretch="Fill"  StrokeThickness="2" 
+    Data="M39.8,78.2c2.7,0,5.3-1.1,7.2-3c4-3.9,4-10.4,0-14.3L24.4,38.6L47,16.3c4-3.9,4-10.4,0-14.3
+	c-1.9-1.9-4.5-3-7.2-3s-5.3,1.1-7.2,3L3,31.2c-2,2-3.1,4.7-3,7.5c-0.1,2.8,1,5.5,3,7.4l29.5,29.2C34.5,77.2,37,78.2,39.8,78.2
+	L39.8,78.2z" />
+            <!--下一页-->
+            <Path x:Key="NextPagePath" Fill="#466BC1" Stretch="Fill"  StrokeThickness="2" 
+    Data="M10.2,78.2c2.7,0,5.3-1.1,7.2-3L47,46c2-2,3.1-4.7,3-7.4c0.1-2.8-1-5.5-3-7.5L17.5,2c-1.9-1.9-4.5-3-7.2-3
+	S5,0.1,3.1,2c-4,3.9-4,10.4,0,14.3l22.5,22.3L3,60.9c-4,4-4,10.4,0,14.3C4.9,77.1,7.5,78.2,10.2,78.2L10.2,78.2z" />
+
+            <Path x:Key="NextPagePathDis" Fill="#A5A5A5" Stretch="Fill"  StrokeThickness="2" 
+    Data="M10.2,78.2c2.7,0,5.3-1.1,7.2-3L47,46c2-2,3.1-4.7,3-7.4c0.1-2.8-1-5.5-3-7.5L17.5,2c-1.9-1.9-4.5-3-7.2-3
+	S5,0.1,3.1,2c-4,3.9-4,10.4,0,14.3l22.5,22.3L3,60.9c-4,4-4,10.4,0,14.3C4.9,77.1,7.5,78.2,10.2,78.2L10.2,78.2z" />
+
+
+            <!--上一页-->
+            <Style x:Key="ButtonSYYStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonDefaultIcoStyle}">
+                <Setter Property="Width" Value="60"/>
+                <Setter Property="Height" Value="120"/>
+                <Setter Property="Margin" Value="0,0,10,0"/>
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Margin="10,0" Opacity="0.8">
+
+                                <Border.Background>
+                                    <VisualBrush Visual="{DynamicResource PreviousPagePath}"/>
+                                </Border.Background>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="false">
+                        <Setter Property="Opacity" Value="0.5"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border Margin="10,0">
+                                        <Border.Background>
+                                            <VisualBrush Visual="{DynamicResource PreviousPagePathDis}" />
+                                        </Border.Background>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!--下一页-->
+            <Style x:Key="ButtonXYYStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonDefaultIcoStyle}">
+                <Setter Property="Width" Value="60"/>
+                <Setter Property="Height" Value="120"/>
+                <Setter Property="Margin" Value="10,0,0,0"/>
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Margin="10,0" Opacity="0.8">
+                                <Border.Background>
+                                    <VisualBrush Visual="{DynamicResource NextPagePath}" />
+                                </Border.Background>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="false">
+                        <Setter Property="Opacity" Value="0.5"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border Margin="10,0">
+                                        <Border.Background>
+                                            <VisualBrush Visual="{DynamicResource NextPagePathDis}" />
+                                        </Border.Background>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                </Style.Triggers>
+
+            </Style>
+
+            <!--默认没有内容的按钮-->
+            <Style x:Key="ButtonDefalutNoContentStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonDefaultIcoStyle}">
+                <Setter Property="Width" Value="50"/>
+                <Setter Property="Height" Value="50"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Foreground" Value="#010101"/>
+                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border BorderBrush="#d9ddee" BorderThickness="1" x:Name="bd">
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <!--<TextBlock Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       FontWeight="Bold" Foreground="White"/>-->
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--选择手写文字-->
+            <Style x:Key="SelectStockButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonDefaultIcoStyle}">
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Width" Value="140"/>
+                <Setter Property="Height" Value="80"/>
+                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid  x:Name="bd">
+                                <Image Source="pack://application:,,,/Images/键盘按钮.png" Stretch="Fill" x:Name="img"/>
+                                <TextBlock Text="{TemplateBinding Content}" Margin="5"
+                                       x:Name="txb" Foreground="#FF616161" FontSize="{TemplateBinding FontSize}" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" FontWeight="Bold"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Source" Value="pack://application:,,,/Images/键盘按钮-点击.png" TargetName="img"/>
+                                    <Setter Property="Foreground" Value="#FFFFFF" TargetName="txb"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <TextBox Name="txt" Width="300" Height="50" FontSize="35" GotFocus="txt_GotFocus"></TextBox>
+
+        <Grid x:Name="gdKeyBord8" Style="{StaticResource gridKeyboardStyle}" Grid.Row="1">
+            <Grid Margin="0,10">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Search_ButtonJPStyle}" >
+                        <Setter Property="Width" Value="80"></Setter>
+                        <Setter Property="Margin" Value="5,10,5,5"/>
+                    </Style>
+
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="7*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" >
+                    <ItemsControl Margin="50,0,0,0"
+                              ItemsSource="{Binding Alternates}" Visibility="Collapsed" x:Name="sxControl">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{StaticResource SelectStockButton}"
+                                    Click="SelectCharactorButtonOnClick"
+                                    Content="{Binding}"
+                                    Focusable="False" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Name="sxMessage">
+                        <Label FontSize="40" Foreground="White">请在右侧操作板书写</Label>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <StackPanel Orientation="Vertical"  VerticalAlignment="Center">
+                        <InkCanvas x:Name="WritingCanvas"
+                       Focusable="False"
+                                       MaxHeight="250"
+                       StrokeCollected="WritingCanvasOnStrokeCollected" >
+                            <InkCanvas.Background>
+                                <ImageBrush ImageSource="pack://application:,,,/Images/Other_Inpput.png" Stretch="Fill"/>
+                            </InkCanvas.Background>
+                        </InkCanvas>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                        <Button Content="拼音" Tag="Z" Width="100" Click="btnChangePY_Click" Margin="0,30,0,0"/>
+                        <Button Content="清空" Tag="X" Width="100" Click="ClearButtonOnClick"  Margin="0,30,0,0"/>
+                        <Button Content="确定" Tag="C" Width="100" Margin="0,30,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+
+        <Grid Grid.Row="1" x:Name="gdKeyBord5" Style="{StaticResource gridKeyboardStyle}">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10" >
+                <Grid.Resources>
+                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource Search_ButtonJPStyle}">
+                        <Setter Property="Width" Value="80"></Setter>
+                        <Setter Property="Margin" Value="5,10,5,5"/>
+                    </Style>
+
+                </Grid.Resources>
+                <!--<Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Border x:Name="spPYSelect" Grid.Row="0" Background="#ededf5" BorderBrush="#cdd0e2" BorderThickness="2" CornerRadius="10" Margin="0,10" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="0,5">
+                        <TextBlock TextDecorations="Underline" x:Name="txbpy" FontSize="40" Foreground="#010101" MaxHeight="200" Margin="0,0,20,0"/>
+                        <Button Content="上一页"  Style="{StaticResource ButtonSYYStyle}" Height="60" Margin="0"  x:Name="btnPYSYY" Click="btnPYSYY_Click"/>
+                        <ItemsControl x:Name="ic" Grid.Column="1" Width="600" Margin="10,0,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Content="{Binding Path=.}" Click="Button_Click" 
+                                            Style="{StaticResource ButtonDefalutNoContentStyle}" Margin="2,0"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel VerticalAlignment="Center"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+
+                        <Button Content="下一页"  Style="{StaticResource ButtonXYYStyle}" Height="60" Margin="0" x:Name="btnPYXYY" Click="btnPYXYY_Click"/>
+                    </StackPanel>
+                </Border>-->
+
+                <Grid Grid.Row="1" VerticalAlignment="Top" >
+                    <!--键盘-->
+                    <Grid>
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid.Resources>
+                                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonJPStyle}">
+                                    <Setter Property="FontSize" Value="30"/>
+                                    <Setter Property="Width" Value="80"/>
+                                    <Setter Property="Height" Value="70"/>
+                                    <Setter Property="Margin" Value="5,0,0,5"/>
+                                </Style>
+                            </Grid.Resources>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="Q" CommandParameter="81" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="W" CommandParameter="87"/>
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="E" CommandParameter="69" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="R" CommandParameter="82" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="T" CommandParameter="84" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="Y" CommandParameter="89" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="U" CommandParameter="85" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="I" CommandParameter="73" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="O" CommandParameter="79" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="P" CommandParameter="80" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="A" CommandParameter="65" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="S" CommandParameter="83" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="D" CommandParameter="68" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="F" CommandParameter="70" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="G" CommandParameter="71" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="H" CommandParameter="72" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="J" CommandParameter="74" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="K" CommandParameter="75" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="L" CommandParameter="76" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="手写" Tag="10" Click="btnSX_Click"/>
+                                    <Button Content="退格" Focusable="False" Command="{Binding btnPYKey}" CommandParameter="8"/>
+                                    <Button Content="清除" Tag="10" Click="btnPYClearKey_Click"/>
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="Z" CommandParameter="90" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="X" CommandParameter="88" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="C" CommandParameter="67" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="V" CommandParameter="86" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="B" CommandParameter="66" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="N" CommandParameter="78" />
+                                    <Button Focusable="False" Command="{Binding btnPYKey}" Content="M" CommandParameter="77" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+             
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
